@@ -1,0 +1,2162 @@
+{
+    "name": "Dynamic Cold Caller (Vapi)",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:filterRows",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 2132426
+            },
+            "mapper": {
+                "from": "drive",
+                "filter": [
+                    [
+                        {
+                            "a": "C",
+                            "b": "not-called",
+                            "o": "text:equal"
+                        }
+                    ]
+                ],
+                "sheetId": "Sheet1",
+                "sortOrder": "asc",
+                "spreadsheetId": "1KjYqbkOAvqiMlFeISJ5w1cbMsOF6-Rvw9cx09HQ4lXM",
+                "tableFirstRow": "A1:CZ1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "Select from My Drive"
+                        },
+                        "orderBy": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Sheet1"
+                        },
+                        "sortOrder": {
+                            "mode": "chose",
+                            "label": "Ascending"
+                        },
+                        "spreadsheetId": {
+                            "mode": "chose",
+                            "label": "Cold Calling Database"
+                        },
+                        "tableFirstRow": {
+                            "label": "A-CZ"
+                        },
+                        "includesHeaders": {
+                            "mode": "chose",
+                            "label": "Yes"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "Google Integraticus (hello@integraticus.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Enter a Spreadsheet ID and Sheet Name",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "number",
+                        "label": "Maximum number of returned rows"
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "select",
+                        "label": "Spreadsheet",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "select",
+                        "label": "Column range",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "A1:Z1",
+                                "A1:BZ1",
+                                "A1:CZ1",
+                                "A1:DZ1",
+                                "A1:MZ1",
+                                "A1:ZZ1",
+                                "A1:AZZ1",
+                                "A1:BZZ1",
+                                "A1:CZZ1",
+                                "A1:DZZ1",
+                                "A1:MZZ1",
+                                "A1:ZZZ1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "Filter",
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                    },
+                    {
+                        "name": "sortOrder",
+                        "type": "select",
+                        "label": "Sort order",
+                        "validate": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order by"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "type": "uinteger",
+                        "label": "Total number of bundles"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "type": "uinteger",
+                        "label": "Bundle order position"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "Phone Number (A)"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "First Name (B)"
+                    },
+                    {
+                        "name": "2",
+                        "type": "text",
+                        "label": "Status (C)"
+                    },
+                    {
+                        "name": "3",
+                        "type": "text",
+                        "label": "Wants to sell? (D)"
+                    },
+                    {
+                        "name": "4",
+                        "type": "text",
+                        "label": "Extra Property Details (E)"
+                    },
+                    {
+                        "name": "5",
+                        "type": "text",
+                        "label": "(F)"
+                    },
+                    {
+                        "name": "6",
+                        "type": "text",
+                        "label": "(G)"
+                    },
+                    {
+                        "name": "7",
+                        "type": "text",
+                        "label": "(H)"
+                    },
+                    {
+                        "name": "8",
+                        "type": "text",
+                        "label": "(I)"
+                    },
+                    {
+                        "name": "9",
+                        "type": "text",
+                        "label": "(J)"
+                    },
+                    {
+                        "name": "10",
+                        "type": "text",
+                        "label": "(K)"
+                    },
+                    {
+                        "name": "11",
+                        "type": "text",
+                        "label": "(L)"
+                    },
+                    {
+                        "name": "12",
+                        "type": "text",
+                        "label": "(M)"
+                    },
+                    {
+                        "name": "13",
+                        "type": "text",
+                        "label": "(N)"
+                    },
+                    {
+                        "name": "14",
+                        "type": "text",
+                        "label": "(O)"
+                    },
+                    {
+                        "name": "15",
+                        "type": "text",
+                        "label": "(P)"
+                    },
+                    {
+                        "name": "16",
+                        "type": "text",
+                        "label": "(Q)"
+                    },
+                    {
+                        "name": "17",
+                        "type": "text",
+                        "label": "(R)"
+                    },
+                    {
+                        "name": "18",
+                        "type": "text",
+                        "label": "(S)"
+                    },
+                    {
+                        "name": "19",
+                        "type": "text",
+                        "label": "(T)"
+                    },
+                    {
+                        "name": "20",
+                        "type": "text",
+                        "label": "(U)"
+                    },
+                    {
+                        "name": "21",
+                        "type": "text",
+                        "label": "(V)"
+                    },
+                    {
+                        "name": "22",
+                        "type": "text",
+                        "label": "(W)"
+                    },
+                    {
+                        "name": "23",
+                        "type": "text",
+                        "label": "(X)"
+                    },
+                    {
+                        "name": "24",
+                        "type": "text",
+                        "label": "(Y)"
+                    },
+                    {
+                        "name": "25",
+                        "type": "text",
+                        "label": "(Z)"
+                    },
+                    {
+                        "name": "26",
+                        "type": "text",
+                        "label": "(AA)"
+                    },
+                    {
+                        "name": "27",
+                        "type": "text",
+                        "label": "(AB)"
+                    },
+                    {
+                        "name": "28",
+                        "type": "text",
+                        "label": "(AC)"
+                    },
+                    {
+                        "name": "29",
+                        "type": "text",
+                        "label": "(AD)"
+                    },
+                    {
+                        "name": "30",
+                        "type": "text",
+                        "label": "(AE)"
+                    },
+                    {
+                        "name": "31",
+                        "type": "text",
+                        "label": "(AF)"
+                    },
+                    {
+                        "name": "32",
+                        "type": "text",
+                        "label": "(AG)"
+                    },
+                    {
+                        "name": "33",
+                        "type": "text",
+                        "label": "(AH)"
+                    },
+                    {
+                        "name": "34",
+                        "type": "text",
+                        "label": "(AI)"
+                    },
+                    {
+                        "name": "35",
+                        "type": "text",
+                        "label": "(AJ)"
+                    },
+                    {
+                        "name": "36",
+                        "type": "text",
+                        "label": "(AK)"
+                    },
+                    {
+                        "name": "37",
+                        "type": "text",
+                        "label": "(AL)"
+                    },
+                    {
+                        "name": "38",
+                        "type": "text",
+                        "label": "(AM)"
+                    },
+                    {
+                        "name": "39",
+                        "type": "text",
+                        "label": "(AN)"
+                    },
+                    {
+                        "name": "40",
+                        "type": "text",
+                        "label": "(AO)"
+                    },
+                    {
+                        "name": "41",
+                        "type": "text",
+                        "label": "(AP)"
+                    },
+                    {
+                        "name": "42",
+                        "type": "text",
+                        "label": "(AQ)"
+                    },
+                    {
+                        "name": "43",
+                        "type": "text",
+                        "label": "(AR)"
+                    },
+                    {
+                        "name": "44",
+                        "type": "text",
+                        "label": "(AS)"
+                    },
+                    {
+                        "name": "45",
+                        "type": "text",
+                        "label": "(AT)"
+                    },
+                    {
+                        "name": "46",
+                        "type": "text",
+                        "label": "(AU)"
+                    },
+                    {
+                        "name": "47",
+                        "type": "text",
+                        "label": "(AV)"
+                    },
+                    {
+                        "name": "48",
+                        "type": "text",
+                        "label": "(AW)"
+                    },
+                    {
+                        "name": "49",
+                        "type": "text",
+                        "label": "(AX)"
+                    },
+                    {
+                        "name": "50",
+                        "type": "text",
+                        "label": "(AY)"
+                    },
+                    {
+                        "name": "51",
+                        "type": "text",
+                        "label": "(AZ)"
+                    },
+                    {
+                        "name": "52",
+                        "type": "text",
+                        "label": "(BA)"
+                    },
+                    {
+                        "name": "53",
+                        "type": "text",
+                        "label": "(BB)"
+                    },
+                    {
+                        "name": "54",
+                        "type": "text",
+                        "label": "(BC)"
+                    },
+                    {
+                        "name": "55",
+                        "type": "text",
+                        "label": "(BD)"
+                    },
+                    {
+                        "name": "56",
+                        "type": "text",
+                        "label": "(BE)"
+                    },
+                    {
+                        "name": "57",
+                        "type": "text",
+                        "label": "(BF)"
+                    },
+                    {
+                        "name": "58",
+                        "type": "text",
+                        "label": "(BG)"
+                    },
+                    {
+                        "name": "59",
+                        "type": "text",
+                        "label": "(BH)"
+                    },
+                    {
+                        "name": "60",
+                        "type": "text",
+                        "label": "(BI)"
+                    },
+                    {
+                        "name": "61",
+                        "type": "text",
+                        "label": "(BJ)"
+                    },
+                    {
+                        "name": "62",
+                        "type": "text",
+                        "label": "(BK)"
+                    },
+                    {
+                        "name": "63",
+                        "type": "text",
+                        "label": "(BL)"
+                    },
+                    {
+                        "name": "64",
+                        "type": "text",
+                        "label": "(BM)"
+                    },
+                    {
+                        "name": "65",
+                        "type": "text",
+                        "label": "(BN)"
+                    },
+                    {
+                        "name": "66",
+                        "type": "text",
+                        "label": "(BO)"
+                    },
+                    {
+                        "name": "67",
+                        "type": "text",
+                        "label": "(BP)"
+                    },
+                    {
+                        "name": "68",
+                        "type": "text",
+                        "label": "(BQ)"
+                    },
+                    {
+                        "name": "69",
+                        "type": "text",
+                        "label": "(BR)"
+                    },
+                    {
+                        "name": "70",
+                        "type": "text",
+                        "label": "(BS)"
+                    },
+                    {
+                        "name": "71",
+                        "type": "text",
+                        "label": "(BT)"
+                    },
+                    {
+                        "name": "72",
+                        "type": "text",
+                        "label": "(BU)"
+                    },
+                    {
+                        "name": "73",
+                        "type": "text",
+                        "label": "(BV)"
+                    },
+                    {
+                        "name": "74",
+                        "type": "text",
+                        "label": "(BW)"
+                    },
+                    {
+                        "name": "75",
+                        "type": "text",
+                        "label": "(BX)"
+                    },
+                    {
+                        "name": "76",
+                        "type": "text",
+                        "label": "(BY)"
+                    },
+                    {
+                        "name": "77",
+                        "type": "text",
+                        "label": "(BZ)"
+                    },
+                    {
+                        "name": "78",
+                        "type": "text",
+                        "label": "(CA)"
+                    },
+                    {
+                        "name": "79",
+                        "type": "text",
+                        "label": "(CB)"
+                    },
+                    {
+                        "name": "80",
+                        "type": "text",
+                        "label": "(CC)"
+                    },
+                    {
+                        "name": "81",
+                        "type": "text",
+                        "label": "(CD)"
+                    },
+                    {
+                        "name": "82",
+                        "type": "text",
+                        "label": "(CE)"
+                    },
+                    {
+                        "name": "83",
+                        "type": "text",
+                        "label": "(CF)"
+                    },
+                    {
+                        "name": "84",
+                        "type": "text",
+                        "label": "(CG)"
+                    },
+                    {
+                        "name": "85",
+                        "type": "text",
+                        "label": "(CH)"
+                    },
+                    {
+                        "name": "86",
+                        "type": "text",
+                        "label": "(CI)"
+                    },
+                    {
+                        "name": "87",
+                        "type": "text",
+                        "label": "(CJ)"
+                    },
+                    {
+                        "name": "88",
+                        "type": "text",
+                        "label": "(CK)"
+                    },
+                    {
+                        "name": "89",
+                        "type": "text",
+                        "label": "(CL)"
+                    },
+                    {
+                        "name": "90",
+                        "type": "text",
+                        "label": "(CM)"
+                    },
+                    {
+                        "name": "91",
+                        "type": "text",
+                        "label": "(CN)"
+                    },
+                    {
+                        "name": "92",
+                        "type": "text",
+                        "label": "(CO)"
+                    },
+                    {
+                        "name": "93",
+                        "type": "text",
+                        "label": "(CP)"
+                    },
+                    {
+                        "name": "94",
+                        "type": "text",
+                        "label": "(CQ)"
+                    },
+                    {
+                        "name": "95",
+                        "type": "text",
+                        "label": "(CR)"
+                    },
+                    {
+                        "name": "96",
+                        "type": "text",
+                        "label": "(CS)"
+                    },
+                    {
+                        "name": "97",
+                        "type": "text",
+                        "label": "(CT)"
+                    },
+                    {
+                        "name": "98",
+                        "type": "text",
+                        "label": "(CU)"
+                    },
+                    {
+                        "name": "99",
+                        "type": "text",
+                        "label": "(CV)"
+                    },
+                    {
+                        "name": "100",
+                        "type": "text",
+                        "label": "(CW)"
+                    },
+                    {
+                        "name": "101",
+                        "type": "text",
+                        "label": "(CX)"
+                    },
+                    {
+                        "name": "102",
+                        "type": "text",
+                        "label": "(CY)"
+                    },
+                    {
+                        "name": "103",
+                        "type": "text",
+                        "label": "(CZ)"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "module": "builtin:BasicAggregator",
+            "version": 1,
+            "parameters": {
+                "feeder": 1
+            },
+            "mapper": {
+                "0": "{{1.`0`}}",
+                "1": "{{1.`1`}}",
+                "2": "{{1.`2`}}",
+                "3": "{{1.`3`}}",
+                "4": "{{1.`4`}}",
+                "5": "{{1.`5`}}",
+                "6": "{{1.`6`}}",
+                "7": "{{1.`7`}}",
+                "8": "{{1.`8`}}",
+                "9": "{{1.`9`}}",
+                "10": "{{1.`10`}}",
+                "11": "{{1.`11`}}",
+                "12": "{{1.`12`}}",
+                "13": "{{1.`13`}}",
+                "14": "{{1.`14`}}",
+                "15": "{{1.`15`}}",
+                "16": "{{1.`16`}}",
+                "17": "{{1.`17`}}",
+                "18": "{{1.`18`}}",
+                "19": "{{1.`19`}}",
+                "20": "{{1.`20`}}",
+                "21": "{{1.`21`}}",
+                "22": "{{1.`22`}}",
+                "23": "{{1.`23`}}",
+                "24": "{{1.`24`}}",
+                "25": "{{1.`25`}}",
+                "26": "{{1.`26`}}",
+                "27": "{{1.`27`}}",
+                "28": "{{1.`28`}}",
+                "29": "{{1.`29`}}",
+                "30": "{{1.`30`}}",
+                "31": "{{1.`31`}}",
+                "32": "{{1.`32`}}",
+                "33": "{{1.`33`}}",
+                "34": "{{1.`34`}}",
+                "35": "{{1.`35`}}",
+                "36": "{{1.`36`}}",
+                "37": "{{1.`37`}}",
+                "38": "{{1.`38`}}",
+                "39": "{{1.`39`}}",
+                "40": "{{1.`40`}}",
+                "41": "{{1.`41`}}",
+                "42": "{{1.`42`}}",
+                "43": "{{1.`43`}}",
+                "44": "{{1.`44`}}",
+                "45": "{{1.`45`}}",
+                "46": "{{1.`46`}}",
+                "47": "{{1.`47`}}",
+                "48": "{{1.`48`}}",
+                "49": "{{1.`49`}}",
+                "50": "{{1.`50`}}",
+                "51": "{{1.`51`}}",
+                "52": "{{1.`52`}}",
+                "53": "{{1.`53`}}",
+                "54": "{{1.`54`}}",
+                "55": "{{1.`55`}}",
+                "56": "{{1.`56`}}",
+                "57": "{{1.`57`}}",
+                "58": "{{1.`58`}}",
+                "59": "{{1.`59`}}",
+                "60": "{{1.`60`}}",
+                "61": "{{1.`61`}}",
+                "62": "{{1.`62`}}",
+                "63": "{{1.`63`}}",
+                "64": "{{1.`64`}}",
+                "65": "{{1.`65`}}",
+                "66": "{{1.`66`}}",
+                "67": "{{1.`67`}}",
+                "68": "{{1.`68`}}",
+                "69": "{{1.`69`}}",
+                "70": "{{1.`70`}}",
+                "71": "{{1.`71`}}",
+                "72": "{{1.`72`}}",
+                "73": "{{1.`73`}}",
+                "74": "{{1.`74`}}",
+                "75": "{{1.`75`}}",
+                "76": "{{1.`76`}}",
+                "77": "{{1.`77`}}",
+                "78": "{{1.`78`}}",
+                "79": "{{1.`79`}}",
+                "80": "{{1.`80`}}",
+                "81": "{{1.`81`}}",
+                "82": "{{1.`82`}}",
+                "83": "{{1.`83`}}",
+                "84": "{{1.`84`}}",
+                "85": "{{1.`85`}}",
+                "86": "{{1.`86`}}",
+                "87": "{{1.`87`}}",
+                "88": "{{1.`88`}}",
+                "89": "{{1.`89`}}",
+                "90": "{{1.`90`}}",
+                "91": "{{1.`91`}}",
+                "92": "{{1.`92`}}",
+                "93": "{{1.`93`}}",
+                "94": "{{1.`94`}}",
+                "95": "{{1.`95`}}",
+                "96": "{{1.`96`}}",
+                "97": "{{1.`97`}}",
+                "98": "{{1.`98`}}",
+                "99": "{{1.`99`}}",
+                "100": "{{1.`100`}}",
+                "101": "{{1.`101`}}",
+                "102": "{{1.`102`}}",
+                "103": "{{1.`103`}}",
+                "__SHEET__": "{{1.`__SHEET__`}}",
+                "__IMTINDEX__": "{{1.`__IMTINDEX__`}}",
+                "__IMTLENGTH__": "{{1.`__IMTLENGTH__`}}",
+                "__ROW_NUMBER__": "{{1.`__ROW_NUMBER__`}}",
+                "__SPREADSHEET_ID__": "{{1.`__SPREADSHEET_ID__`}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "Google Sheets - Search Rows [1]"
+                        },
+                        "target": {
+                            "label": "Custom"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "assistant_id",
+                "scope": "roundtrip",
+                "value": "3f2e4a47-47b4-4dae-8459-fbc9a2fc44c4"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "Assistant ID"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "default": "roundtrip",
+                        "options": [
+                            {
+                                "label": "One cycle",
+                                "value": "roundtrip"
+                            },
+                            {
+                                "label": "One execution",
+                                "value": "execution"
+                            }
+                        ],
+                        "required": true
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "assistant_id",
+                        "type": "any",
+                        "label": "assistant_id"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "vapi_api_key",
+                "scope": "roundtrip",
+                "value": "387792ed-0611-4c78-863b-7cfc78c86cf1"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0,
+                    "name": "Vapi API Key"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "default": "roundtrip",
+                        "options": [
+                            {
+                                "label": "One cycle",
+                                "value": "roundtrip"
+                            },
+                            {
+                                "label": "One execution",
+                                "value": "execution"
+                            }
+                        ],
+                        "required": true
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "vapi_api_key",
+                        "type": "any",
+                        "label": "vapi_api_key"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 19,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "phone_number_id",
+                "scope": "roundtrip",
+                "value": "b2212662-b8e0-432a-88df-de3c988eabd4"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1200,
+                    "y": 0,
+                    "name": "Phone Number Id"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "phone_number_id",
+                        "type": "any",
+                        "label": "phone_number_id"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "http:ActionSendData",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "https://api.vapi.ai/assistant/{{3.assistant_id}}",
+                "gzip": true,
+                "method": "get",
+                "headers": [
+                    {
+                        "name": "Authorization",
+                        "value": "Bearer {{5.vapi_api_key}}"
+                    }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1500,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "qs": {
+                            "mode": "chose"
+                        },
+                        "method": {
+                            "mode": "chose",
+                            "label": "GET"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "bodyType": {
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    },
+                    {
+                        "name": "useNewZLibDeCompress",
+                        "type": "hidden"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "bodyType",
+                        "type": "select",
+                        "label": "Body type",
+                        "validate": {
+                            "enum": [
+                                "raw",
+                                "x_www_form_urlencoded",
+                                "multipart_form_data"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "authUser",
+                        "type": "text",
+                        "label": "User name"
+                    },
+                    {
+                        "name": "authPass",
+                        "type": "password",
+                        "label": "Password"
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "ca",
+                        "type": "cert",
+                        "label": "Self-signed certificate"
+                    },
+                    {
+                        "name": "rejectUnauthorized",
+                        "type": "boolean",
+                        "label": "Reject connections that are using unverified (self-signed) certificates",
+                        "required": true
+                    },
+                    {
+                        "name": "followRedirect",
+                        "type": "boolean",
+                        "label": "Follow redirect",
+                        "required": true
+                    },
+                    {
+                        "name": "useQuerystring",
+                        "type": "boolean",
+                        "label": "Disable serialization of multiple same query string keys as arrays",
+                        "required": true
+                    },
+                    {
+                        "name": "gzip",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "useMtls",
+                        "type": "boolean",
+                        "label": "Use Mutual TLS",
+                        "required": true
+                    },
+                    {
+                        "name": "followAllRedirects",
+                        "type": "boolean",
+                        "label": "Follow all redirect",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "module": "builtin:BasicFeeder",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "array": "{{7.array}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1800,
+                    "y": 0,
+                    "name": "GSheet Iterator"
+                },
+                "restore": {
+                    "expect": {
+                        "array": {
+                            "mode": "edit"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "mode": "edit",
+                        "name": "array",
+                        "spec": [],
+                        "type": "array",
+                        "label": "Array"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 18,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "dynamic_assistant",
+                "scope": "roundtrip",
+                "value": "{{2.data}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2100,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "dynamic_assistant",
+                        "type": "any",
+                        "label": "dynamic_assistant"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "module": "json:ParseJSON",
+            "version": 1,
+            "parameters": {
+                "type": ""
+            },
+            "mapper": {
+                "json": "[\n  {\n    \"tag\": \"first_name\",\n    \"value\": \"{{9.`1`}}\"\n  },\n  {\n    \"tag\": \"current_time\",\n    \"value\": \"{{formatDate(now; \"YYYY-MM-DD hh:mm A\")}}\"\n  }\n]"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2400,
+                    "y": 0,
+                    "name": "Dynamic Variables"
+                },
+                "restore": {
+                    "parameters": {
+                        "type": {
+                            "label": "Choose a data structure"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "type",
+                        "type": "udt",
+                        "label": "Data structure"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "json",
+                        "type": "text",
+                        "label": "JSON string",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 16,
+            "module": "util:GetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "dynamic_assistant"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2700,
+                    "y": 0
+                },
+                "restore": {},
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "dynamic_assistant",
+                        "type": "any",
+                        "label": "dynamic_assistant"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 11,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "dynamic_assistant",
+                "scope": "roundtrip",
+                "value": "{{replace(toString(16.dynamic_assistant); \"[\" + 8.tag + \"]\"; 8.value)}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3000,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "dynamic_assistant",
+                        "type": "any",
+                        "label": "dynamic_assistant"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 13,
+            "module": "builtin:BasicAggregator",
+            "version": 1,
+            "parameters": {
+                "feeder": 8
+            },
+            "mapper": {
+                "tag": "{{8.tag}}",
+                "value": "{{8.value}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3300,
+                    "y": 0
+                },
+                "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "Dynamic Variables - Parse JSON [8]"
+                        },
+                        "target": {
+                            "label": "Custom"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "id": 15,
+            "module": "util:GetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "dynamic_assistant"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3600,
+                    "y": 0
+                },
+                "restore": {},
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "dynamic_assistant",
+                        "type": "any",
+                        "label": "dynamic_assistant"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 20,
+            "module": "json:ParseJSON",
+            "version": 1,
+            "parameters": {
+                "type": ""
+            },
+            "mapper": {
+                "json": "[{{15.dynamic_assistant}}]"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3900,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "type": {
+                            "label": "Choose a data structure"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "type",
+                        "type": "udt",
+                        "label": "Data structure"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "json",
+                        "type": "text",
+                        "label": "JSON string",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 21,
+            "module": "builtin:BasicAggregator",
+            "version": 1,
+            "parameters": {
+                "feeder": 20
+            },
+            "mapper": {
+                "name": "{{20.name}}",
+                "voice": "{{20.voice}}",
+                "model": "{{20.model}}",
+                "recordingEnabled": "{{20.recordingEnabled}}",
+                "firstMessage": "{{20.firstMessage}}",
+                "voicemailMessage": "{{20.voicemailMessage}}",
+                "endCallFunctionEnabled": "{{20.endCallFunctionEnabled}}",
+                "endCallMessage": "{{20.endCallMessage}}",
+                "transcriber": "{{20.transcriber}}",
+                "clientMessages": "{{20.clientMessages}}",
+                "serverMessages": "{{20.serverMessages}}",
+                "dialKeypadFunctionEnabled": "{{20.dialKeypadFunctionEnabled}}",
+                "serverUrl": "{{20.serverUrl}}",
+                "endCallPhrases": "{{20.endCallPhrases}}",
+                "hipaaEnabled": "{{20.hipaaEnabled}}",
+                "backgroundSound": "{{20.backgroundSound}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 4200,
+                    "y": 0,
+                    "name": "Key Whitelist"
+                },
+                "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "JSON - Parse JSON [20]"
+                        },
+                        "target": {
+                            "label": "Custom"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "id": 29,
+            "module": "json:TransformToJSON",
+            "version": 1,
+            "parameters": {
+                "space": ""
+            },
+            "mapper": {
+                "object": "{{first(21.array)}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 4500,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "space": {
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "space",
+                        "type": "select",
+                        "label": "Indentation",
+                        "validate": {
+                            "enum": [
+                                "tab",
+                                "2",
+                                "4"
+                            ]
+                        }
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "object",
+                        "label": "Object",
+                        "type": "any"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 14,
+            "module": "http:ActionSendData",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "url": "https://api.vapi.ai/call/phone",
+                "serializeUrl": false,
+                "method": "post",
+                "headers": [
+                    {
+                        "name": "Authorization",
+                        "value": "Bearer {{5.vapi_api_key}}"
+                    }
+                ],
+                "qs": [],
+                "bodyType": "raw",
+                "parseResponse": true,
+                "authUser": "",
+                "authPass": "",
+                "timeout": "",
+                "shareCookies": false,
+                "ca": "",
+                "rejectUnauthorized": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "gzip": true,
+                "useMtls": false,
+                "contentType": "application/json",
+                "data": "{\n  \"phoneNumberId\": \"{{19.phone_number_id}}\",\n  \"customer\": {\n    \"number\": \"+{{9.`0`}}\",\n    \"name\": \"{{9.`1`}}\",\n    \"extension\": \"\"\n  },\n  \"assistant\": {{29.json}}\n}",
+                "followAllRedirects": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 4800,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "method": {
+                            "mode": "chose",
+                            "label": "POST"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "qs": {
+                            "mode": "chose"
+                        },
+                        "bodyType": {
+                            "label": "Raw"
+                        },
+                        "contentType": {
+                            "label": "JSON (application/json)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    },
+                    {
+                        "name": "useNewZLibDeCompress",
+                        "type": "hidden"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "label": "URL",
+                        "type": "url",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "label": "Serialize URL",
+                        "help": "Serializes URL and escapes special characters.",
+                        "type": "boolean",
+                        "required": true,
+                        "advanced": true,
+                        "default": false
+                    },
+                    {
+                        "name": "method",
+                        "label": "Method",
+                        "type": "select",
+                        "editable": true,
+                        "options": [
+                            {
+                                "label": "GET",
+                                "value": "get"
+                            },
+                            {
+                                "label": "HEAD",
+                                "value": "head"
+                            },
+                            {
+                                "label": "POST",
+                                "value": "post"
+                            },
+                            {
+                                "label": "PUT",
+                                "value": "put"
+                            },
+                            {
+                                "label": "PATCH",
+                                "value": "patch"
+                            },
+                            {
+                                "label": "DELETE",
+                                "value": "delete"
+                            },
+                            {
+                                "label": "OPTIONS",
+                                "value": "options"
+                            }
+                        ],
+                        "required": true,
+                        "default": "get"
+                    },
+                    {
+                        "name": "headers",
+                        "label": "Headers",
+                        "type": "array",
+                        "required": false,
+                        "editable": true,
+                        "spec": [
+                            {
+                                "name": "name",
+                                "label": "Name",
+                                "type": "text",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "label": "Value",
+                                "type": "text"
+                            }
+                        ],
+                        "labels": {
+                            "add": "Add a header",
+                            "edit": "Edit a header"
+                        }
+                    },
+                    {
+                        "name": "qs",
+                        "label": "Query String",
+                        "type": "array",
+                        "required": false,
+                        "editable": true,
+                        "spec": [
+                            {
+                                "name": "name",
+                                "label": "Name",
+                                "type": "text",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "label": "Value",
+                                "type": "text"
+                            }
+                        ],
+                        "labels": {
+                            "add": "Add parameter",
+                            "edit": "Edit parameter"
+                        }
+                    },
+                    {
+                        "name": "bodyType",
+                        "label": "Body type",
+                        "type": "select",
+                        "options": [
+                            {
+                                "value": "raw",
+                                "label": "Raw",
+                                "nested": [
+                                    {
+                                        "name": "contentType",
+                                        "label": "Content type",
+                                        "help": "Sets the `Content-Type` request header.",
+                                        "type": "select",
+                                        "options": [
+                                            {
+                                                "label": "Text (text/plain)",
+                                                "value": "text/plain"
+                                            },
+                                            {
+                                                "label": "JSON (application/json)",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "label": "XML (application/xml)",
+                                                "value": "application/xml"
+                                            },
+                                            {
+                                                "label": "XML (text/xml)",
+                                                "value": "text/xml"
+                                            },
+                                            {
+                                                "label": "HTML (text/html)",
+                                                "value": "text/html"
+                                            },
+                                            {
+                                                "label": "Custom",
+                                                "value": "custom",
+                                                "nested": [
+                                                    {
+                                                        "name": "customContentType",
+                                                        "label": "Value",
+                                                        "type": "text",
+                                                        "required": true
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "data",
+                                        "label": "Request content",
+                                        "type": "buffer"
+                                    }
+                                ]
+                            },
+                            {
+                                "value": "x_www_form_urlencoded",
+                                "label": "Application/x-www-form-urlencoded",
+                                "nested": [
+                                    {
+                                        "name": "formFields",
+                                        "label": "Fields",
+                                        "type": "array",
+                                        "editable": true,
+                                        "spec": [
+                                            {
+                                                "name": "key",
+                                                "label": "Key",
+                                                "type": "text",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "value",
+                                                "label": "Value",
+                                                "type": "text"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "value": "multipart_form_data",
+                                "label": "Multipart/form-data",
+                                "nested": [
+                                    {
+                                        "name": "formDataFields",
+                                        "label": "Fields",
+                                        "type": "array",
+                                        "editable": true,
+                                        "spec": [
+                                            {
+                                                "name": "fieldType",
+                                                "label": "Field type",
+                                                "type": "select",
+                                                "required": true,
+                                                "options": [
+                                                    {
+                                                        "value": "text",
+                                                        "label": "Text",
+                                                        "nested": [
+                                                            {
+                                                                "name": "key",
+                                                                "label": "Key",
+                                                                "type": "text",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "label": "Value",
+                                                                "type": "text"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "value": "file",
+                                                        "label": "File",
+                                                        "nested": [
+                                                            {
+                                                                "name": "key",
+                                                                "label": "Key",
+                                                                "type": "text",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "data",
+                                                                "label": "Data",
+                                                                "type": "buffer",
+                                                                "semantic": "file:data"
+                                                            },
+                                                            {
+                                                                "name": "fileName",
+                                                                "label": "File name",
+                                                                "help": "File name, including the suffix, e.g. invoice, xml",
+                                                                "type": "filename",
+                                                                "semantic": "file:name"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "parseResponse",
+                        "label": "Parse response",
+                        "help": "Automatically parses responses and converts JSON and XML responses so you don't need to use JSON or XML parser. Before you can use parsed JSON or XML content, run the module once manually so that the module can recognize the response content and allows you to map it in subsequent modules.",
+                        "type": "boolean",
+                        "required": true
+                    },
+                    {
+                        "name": "authUser",
+                        "label": "User name",
+                        "help": "User name for Basic Auth",
+                        "type": "text",
+                        "advanced": true
+                    },
+                    {
+                        "name": "authPass",
+                        "label": "Password",
+                        "help": "Password for Basic Auth",
+                        "type": "password",
+                        "advanced": true
+                    },
+                    {
+                        "name": "timeout",
+                        "label": "Timeout",
+                        "help": "In seconds. Default: 300 seconds. This value controls two timeouts: Read timeout and Connection timeout. Read timeout is a time to wait for a server to send response headers (and start the response body) before aborting the request. Connection timeout sets the socket to timeout after timeout milliseconds of inactivity.",
+                        "type": "uinteger",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        },
+                        "advanced": true
+                    },
+                    {
+                        "name": "shareCookies",
+                        "label": "Share cookies with other HTTP modules",
+                        "type": "boolean",
+                        "required": true,
+                        "default": false,
+                        "advanced": true
+                    },
+                    {
+                        "name": "ca",
+                        "label": "Self-signed certificate",
+                        "help": "Upload your certificate if you want to use TLS using your self-signed certificate.",
+                        "type": "cert",
+                        "advanced": true
+                    },
+                    {
+                        "name": "rejectUnauthorized",
+                        "label": "Reject connections that are using unverified (self-signed) certificates",
+                        "type": "boolean",
+                        "required": true,
+                        "default": true,
+                        "advanced": true
+                    },
+                    {
+                        "name": "followRedirect",
+                        "label": "Follow redirect",
+                        "type": "boolean",
+                        "required": true,
+                        "default": true,
+                        "advanced": true,
+                        "nested": [
+                            {
+                                "name": "followAllRedirects",
+                                "label": "Follow all redirect",
+                                "help": "Follows also non-GET HTTP 3xx responses as redirects.",
+                                "type": "boolean",
+                                "required": true,
+                                "advanced": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "useQuerystring",
+                        "label": "Disable serialization of multiple same query string keys as arrays",
+                        "help": "By default, Make handles multiple values for the same url query string parameter key as arrays (e.g. `www.test.com?foo=bar&foo=baz`will be converted to `www.test.com?foo[0]=bar&foo[1]=baz`). To disable this feature, activate this option.",
+                        "type": "boolean",
+                        "required": true,
+                        "default": false,
+                        "advanced": true
+                    },
+                    {
+                        "name": "gzip",
+                        "label": "Request compressed content",
+                        "help": "Adds an `Accept-Encoding` header to request compressed content.",
+                        "type": "boolean",
+                        "required": true,
+                        "default": true,
+                        "advanced": true
+                    },
+                    {
+                        "name": "useMtls",
+                        "label": "Use Mutual TLS",
+                        "type": "boolean",
+                        "required": true,
+                        "default": false,
+                        "advanced": true
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Content type",
+                        "validate": {
+                            "enum": [
+                                "text/plain",
+                                "application/json",
+                                "application/xml",
+                                "text/xml",
+                                "text/html",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "type": "buffer",
+                        "label": "Request content"
+                    },
+                    {
+                        "name": "followAllRedirects",
+                        "type": "boolean",
+                        "label": "Follow all redirect",
+                        "required": true
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com"
+    }
+}
