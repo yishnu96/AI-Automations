@@ -1,0 +1,1058 @@
+{
+  "name": "SDR",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1c0b0050-daa6-41f4-8fa2-c213af7319cd",
+              "leftValue": "={{ $json.href }}",
+              "rightValue": "\\b(home|services|about|product)\\b",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1140,
+        -20
+      ],
+      "id": "f633ce85-8692-4a47-8d6d-0a30b1066eb1",
+      "name": "Filter2",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "d01ea6a8-7e75-40d4-98f2-25d42b245f36",
+              "leftValue": "={{ $json.href.isUrl() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7d06bbb9-a253-4fd2-9625-22b21cc56154",
+      "name": "Filter out invalid URLs",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        840,
+        -20
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04ced063-09f0-496c-9b28-b8095f9e2297",
+              "name": "href",
+              "value": "={{ $json.href.startsWith(\"/\") ? $('Add protocool to domain (URL)').item.json[\"domain\"] + $json.href : $json.href }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "title",
+        "options": {}
+      },
+      "id": "39b71089-e980-4f26-97c1-0cd49627ee72",
+      "name": "Set domain to path",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        560,
+        -20
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "href",
+        "options": {}
+      },
+      "id": "a17f86a3-aa4d-46ef-bb43-2e0b63e34fc6",
+      "name": "Remove duplicated",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 1,
+      "position": [
+        260,
+        660
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "5b9b7353-bd04-4af2-9480-8de135ff4223",
+              "leftValue": "={{ $json.href }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "275e2c11-1c9a-4a93-87c7-080720e378d1",
+      "name": "Filter out empty hrefs",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        660
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "id": "228ecb9f-054f-4ca9-9f27-b4a38edc5572",
+      "name": "Split out URLs",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        260,
+        300
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "output",
+              "cssSelector": "a",
+              "returnValue": "attribute",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3bc87c83-8832-4304-b52e-0af0490dcdf2",
+      "name": "Retrieve URLs",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        300
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Company URL'] }}",
+        "options": {}
+      },
+      "id": "f3b18336-dfc2-4fab-ac47-7610cb924166",
+      "name": "Get website (URL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -20
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1320,
+        200
+      ],
+      "id": "698e4cb6-5bc2-4b99-89e8-5dcd0acd0429",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields1').item.json['Company URL'] }}\n\n{{ $json.href }}\n",
+        "options": {
+          "systemMessage": "You are an automated data extraction agent tasked with analyzing company profile information from mapped URLs provided by the user. \n\nYou will receive a list of URLs that have been identified as containing company profile information. Your objective is to access these URLs, extract relevant company data, and generate a brief profile summary.\n\nNavigate to the provided URLs and extract key information about what the company does, its products, services, and area of activity. \n\nAlso, Include the companies full name with one address.\n\nFocus on gathering details about the company's core business operations, main offerings, target markets, and primary industry focus from the mapped profile pages.\n\nSynthesize the extracted information into a concise paragraph of 3-5 sentences in plain text format, without any formatting, bullet points, or special characters.\n\nPrioritize the most essential details about the company's core business, main products or services, and primary industry or market. Use clear, straightforward language and avoid technical jargon.\n\nIf you encounter multiple business areas across different URLs or conflicting information, focus on the most prominent or consistently mentioned activities. Extract only factual information present across the mapped URLs and consolidate it into a coherent company profile. \n\nDo not include any disclaimers, explanations of your extraction process, or additional commentary beyond the requested company profile summary."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        560,
+        340
+      ],
+      "id": "2c764f36-f9cf-4c4c-aa9e-23a0e8549946",
+      "name": "Summary Agent1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "href"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        -20
+      ],
+      "id": "f85f81c2-d364-4654-a4b6-f556b4b2664d",
+      "name": "Aggregate1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads - Email,socials ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Enriched",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1020,
+        0
+      ],
+      "id": "f1db17c7-ee99-4892-a306-cd8ad95a8460",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "68839156-01dc-409b-8775-5379b56d979c",
+              "leftValue": "={{ $json['Company URL'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -700,
+        380
+      ],
+      "id": "870881af-6146-4dfc-b48f-9cb7b56ff41d",
+      "name": "Filter3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -380,
+        380
+      ],
+      "id": "a769bb84-4bce-4fbc-9d81-78b900c12a56",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads - Email,socials ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company Name": "={{ $json.company_name }}",
+            "Location": "={{ $json.location }}",
+            "row_number": "={{ $('Google Sheets1').item.json.row_number }}",
+            "Customer": "={{ $json.client }}",
+            "Enriched": "=Yes",
+            "icebreaker": "={{ $json.icebreaker }}",
+            "Company info": "={{ $json.Summary }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email 1",
+              "displayName": "Email 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phoneNumbers",
+              "displayName": "phoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Enriched",
+              "displayName": "Enriched",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "icebreaker",
+              "displayName": "icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1960,
+        660
+      ],
+      "id": "419eba78-786f-4c1c-a796-3b9f1d8cb066",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9eaa9f2c-ebdf-4ede-be0e-a6ed6f3f6b7d",
+              "name": "Company URL",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "6d142147-2766-4f6f-9e25-434454ba002c",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -980,
+        380
+      ],
+      "id": "235010c2-fb86-4cc6-901f-f5593d2adce1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9f659250-5e8d-4013-8c16-b73471edf833",
+              "name": "Company URL",
+              "value": "={{ $json['Company URL'] }}",
+              "type": "string"
+            },
+            {
+              "id": "321cd993-54ee-42bb-89b7-d636d9c1ea84",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -60,
+        -20
+      ],
+      "id": "66176344-5d3d-4ab4-9225-d435d2d58346",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c378f446-9d6f-4e36-bafb-facef3121992",
+              "name": "Summary",
+              "value": "={{ $('Summary Agent1').first().json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "055f81b6-5bc9-4e41-833d-590148aa5802",
+              "name": "row_number",
+              "value": "={{ $('Edit Fields1').first().json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "ddceb8bd-30dd-4656-9e6d-fa60e9534047",
+              "name": "Company URL",
+              "value": "={{ $('Edit Fields1').first().json['Company URL'] }}",
+              "type": "string"
+            },
+            {
+              "id": "010708d3-175f-4bbe-8aa4-0a832e8d0311",
+              "name": "company_name",
+              "value": "={{ $json.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "91ab91cd-a7bf-428b-8b08-c3aea66c6c64",
+              "name": "location",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "8ab38d53-dff5-4ccd-8c5b-5792f3d320aa",
+              "name": "icebreaker",
+              "value": "={{ $json.icebreaker }}",
+              "type": "string"
+            },
+            {
+              "id": "29a6d86e-1f8c-4ecd-a26e-01207aa103a3",
+              "name": "client",
+              "value": "={{ $json.client }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1740,
+        340
+      ],
+      "id": "d5fa2ae9-4137-475a-b827-ae2f03525066",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get data from previous node\nconst agentOutput = $input.all();\nconst outputString = agentOutput[0].json.output;\n\n// Clean and parse the JSON\nconst jsonString1 = outputString.replace(/```json\\n?|```/g, '').trim();\nconst jsonString = jsonString1.replace(/json\\n?|/g, '').trim();\nconst data = JSON.parse(jsonString);\n\n// Extract fields\nconst companyName = data.company_name;\nconst location = data.location; \nconst client = data.client;\nconst icebreaker = data.icebreaker;\n\n// Return for next node\nreturn [\n    {\n        json: {\n            company_name: companyName,\n            location: location,\n            client: client,\n            icebreaker: icebreaker\n        }\n    }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        340
+      ],
+      "id": "8b02eab3-3880-4d5e-9b4f-5ce4bdc964cd",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=From the provided company summary, extract the following information and format it as a JSON schema:\nContext\nI help local solar businesses which serve residential and commercial markets from the USA to get more appointments.\nExtract:\n\nCompany name (exact name mentioned)\nLocation (if mentioned, otherwise \"Not specified\")\nClient status - Analyze if this company is \"Ideal\" or \"Not ideal\" for me to reach out to do business with, based on:\n\nWhether they are a solar business\nWhether they serve residential and/or commercial markets\nWhether they are located in the USA\nWhether they appear to be a local/regional business (not massive corporations)\n\n\nOne-line icebreaker (compelling conversation starter referencing their main service/value proposition)\n\nGuidelines for the icebreaker:\n\nKeep it conversational and engaging\nReference their core business or unique value proposition\nMake it suitable for opening a business conversation\nKeep it under 20 words\nAvoid being overly salesy\nOnly create an icebreaker if the client status is \"Ideal\"\n\nOutput format:\njson{\n  \"company_name\": \"Smart Choice Solar\",\n  \"location\": \"California, USA\",\n  \"client\": \"Ideal\",\n  \"icebreaker\": \"I'd love to discuss how your solar solutions are helping businesses cut energy costs while going green.\"\n}\nNote: \nIf client status is \"Not ideal\", set icebreaker to \"N/A\"\nDo not include any disclaimers, emojis, explanations of your extraction process, or additional commentary beyond the requested json Output format"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1140,
+        340
+      ],
+      "id": "11f401b7-9967-41d9-9ff3-fbe08cbefe21",
+      "name": "DM agent"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        340
+      ],
+      "id": "d85997d7-e709-4f09-97d4-90525f772717",
+      "name": "Wait",
+      "webhookId": "00799b33-6fe3-45fd-aaad-3391e8fc91d7"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1320,
+        0
+      ],
+      "id": "56d974eb-32e6-4f5d-a5ba-88fce6660a49",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "maxItems": 20
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        0
+      ],
+      "id": "4e392b05-5212-4951-82ee-a680d54e3a14",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        900,
+        560
+      ],
+      "id": "f5afa468-fccb-42f4-9ef4-91d81b7dde8b",
+      "name": "Gemini ",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zhrZhlkAfCqokeRK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Test workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out invalid URLs": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set domain to path": {
+      "main": [
+        [
+          {
+            "node": "Filter out invalid URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove duplicated": {
+      "main": [
+        [
+          {
+            "node": "Set domain to path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out empty hrefs": {
+      "main": [
+        [
+          {
+            "node": "Remove duplicated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split out URLs": {
+      "main": [
+        [
+          {
+            "node": "Filter out empty hrefs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve URLs": {
+      "main": [
+        [
+          {
+            "node": "Split out URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get website (URL)": {
+      "main": [
+        [
+          {
+            "node": "Retrieve URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary Agent1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Summary Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Get website (URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DM agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "DM agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini ": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summary Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "DM agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3248d4c5-c578-4f94-b8fd-62efa128d8bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "77f1d8375380ee2bc4995763b4e39528bf040d446fc3e9e5f6d802ec19784049"
+  },
+  "id": "Vaq2otrCMAy4WbfQ",
+  "tags": []
+}

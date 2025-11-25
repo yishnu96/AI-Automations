@@ -1,0 +1,1425 @@
+{
+  "name": "Email verifier (N8N)",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads - Email,socials ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Customer",
+              "lookupValue": "Ideal"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        -420
+      ],
+      "id": "f6919781-d089-4a33-bdc2-ab7332e830dd",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "be0404fe-8e55-4e47-8dca-2f1d5642fbad",
+              "leftValue": "={{ $json['Email 1'] }}",
+              "rightValue": "NIL",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        700,
+        -140
+      ],
+      "id": "a48e29f4-6e99-49dd-9930-c8e444568b9d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "=https://emailverifier.reoon.com/api/v1/verify?email={{ $json['Email 1'] }}&key={{ $json.Kay }}&mode=quick",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1260,
+        -140
+      ],
+      "id": "1a9af9ca-d2bb-4fcf-a5d5-b4b88927bb72",
+      "name": "Email Verification1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "lqfWWcyWPoxsxr5t",
+          "name": "Reoon - 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1000,
+        -160
+      ],
+      "id": "b52bdf37-a93c-4fab-b4c3-e03aeb6480ab",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1500,
+        -140
+      ],
+      "id": "52cb5879-cd86-4375-9af1-54f10016f16c",
+      "name": "Wait",
+      "webhookId": "cee0f31c-1535-4db2-aa8f-3d00fefc1362"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "179f781e-f1f9-4c49-a522-ea2bf0bf307c",
+              "leftValue": "={{ $json.results[0].risk_level }}",
+              "rightValue": "low",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1740,
+        -140
+      ],
+      "id": "4a400236-75c7-4e37-b5dd-e2fb84d75bfd",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2040080273,
+          "mode": "list",
+          "cachedResultName": "Outreach copies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=2040080273"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "Verified",
+            "Email1": "={{ $json.results[0].email }}"
+          },
+          "matchingColumns": [
+            "Email1"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email1",
+              "displayName": "Email1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PhoneNumbers",
+              "displayName": "PhoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email copy",
+              "displayName": "Email copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dm copy",
+              "displayName": "Dm copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2060,
+        -140
+      ],
+      "id": "50320fb3-3268-464d-9379-ae9450ad4226",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -420
+      ],
+      "id": "fbb3787e-3c7a-4789-8aed-167187fe5a03",
+      "name": "Wait1",
+      "webhookId": "3f14188e-d155-4a81-ab40-0dfe981cc399"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads - Email,socials ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer": "=Copy Drafted",
+            "row_number": "={{ $('Wait1').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email 1",
+              "displayName": "Email 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phoneNumbers",
+              "displayName": "phoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Enriched",
+              "displayName": "Enriched",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1400,
+        -420
+      ],
+      "id": "367ed9b7-859c-4788-8e2c-c725a74e1d09",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2040080273,
+          "mode": "list",
+          "cachedResultName": "Outreach copies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=2040080273"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "Unverifiable",
+            "Email1": "={{ $json.results[0].email }}"
+          },
+          "matchingColumns": [
+            "Email1"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email1",
+              "displayName": "Email1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PhoneNumbers",
+              "displayName": "PhoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email copy",
+              "displayName": "Email copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dm copy",
+              "displayName": "Dm copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2060,
+        60
+      ],
+      "id": "6ef2d9e4-fdc5-4b87-a134-c03876c3a05b",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2040080273,
+          "mode": "list",
+          "cachedResultName": "Outreach copies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=2040080273"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "businessName": "={{ $json['Company Name'] }}",
+            "url": "={{ $json.url }}",
+            "Email1": "={{ $json['Email 1'] }}",
+            "PhoneNumbers": "={{ $json.phoneNumbers }}",
+            "Rest Emails": "={{ $json['Rest Emails'] }}",
+            "facebookUrl": "={{ $json.facebookUrl }}",
+            "instagramUrl": "={{ $json.instagramUrl }}",
+            "linkedInUrl": "={{ $json.linkedInUrl }}",
+            "Company info": "={{ $json['Company info'] }}",
+            "Email": "NA",
+            "Location ": "={{ $json.Location }}",
+            "Icebreaker": "={{ $json.icebreaker }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Location ",
+              "displayName": "Location ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email1",
+              "displayName": "Email1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PhoneNumbers",
+              "displayName": "PhoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email copy",
+              "displayName": "Email copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dm copy",
+              "displayName": "Dm copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Icebreaker",
+              "displayName": "Icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1180,
+        -420
+      ],
+      "id": "406e3b32-73ae-47a1-9ce9-e80b80e2a2c5",
+      "name": "Google Sheets4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c71ab82b-fef3-48f7-999f-7b0ca0cfbe06",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "cd25916d-1c57-49c5-8bcb-3e1a558cdb1e",
+              "name": "Email 1",
+              "value": "={{ $json.Email1 }}",
+              "type": "string"
+            },
+            {
+              "id": "1f7c6661-6a5c-4556-ab36-125e7dd39bab",
+              "name": "Company info",
+              "value": "={{ $json['Company info'] }}",
+              "type": "string"
+            },
+            {
+              "id": "107a03df-450e-4d4d-ae8a-52fb674beb38",
+              "name": "Kay",
+              "value": "aVHPtWGyw44wrQVgKP8dzBThlvXxqZI3",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -140
+      ],
+      "id": "051a78ef-4898-4db4-8ae7-ee562b22d275",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2040080273,
+          "mode": "list",
+          "cachedResultName": "Email Verify",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=2040080273"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "NA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        240,
+        -140
+      ],
+      "id": "165ea8c1-94da-4325-b818-0cab2fc62d93",
+      "name": "Google Sheets5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2040080273,
+          "mode": "list",
+          "cachedResultName": "Email Verify",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=2040080273"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Email": "NO EMAIL"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Location ",
+              "displayName": "Location ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email1",
+              "displayName": "Email1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PhoneNumbers",
+              "displayName": "PhoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email copy",
+              "displayName": "Email copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dm copy",
+              "displayName": "Dm copy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Icebreaker",
+              "displayName": "Icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        700,
+        120
+      ],
+      "id": "eedaa745-2651-4460-9b02-9cf23c1e2588",
+      "name": "Google Sheets6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        -420
+      ],
+      "id": "36c9ea57-b7e8-4cfa-9768-3769dd32c0bb",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        -140
+      ],
+      "id": "8bda2aa2-2880-41db-a2dc-04849118fcbf",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Update Sheet ##",
+        "height": 240,
+        "width": 1400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -480
+      ],
+      "id": "8cb830c3-9e6b-46f2-a49f-aea7590f8967",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Email verifier ##",
+        "height": 540,
+        "width": 2400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -220
+      ],
+      "id": "e58710c9-b654-424e-9925-9aeb4d4ee418",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Verification1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Email Verification1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        []
+      ]
+    },
+    "Google Sheets4": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5d13d371-0848-4939-b7da-401dfa1acb1d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "77f1d8375380ee2bc4995763b4e39528bf040d446fc3e9e5f6d802ec19784049"
+  },
+  "id": "vfPUekDv7gx0jwSn",
+  "tags": []
+}

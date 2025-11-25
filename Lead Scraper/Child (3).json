@@ -1,0 +1,756 @@
+{
+  "name": "Child",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.data\n \nconst regex = /https?:\\/\\/[^\\/]+/g\n \nurls = data.match(regex)\n \nreturn urls.map(url => ({json: {url: url}}))"
+      },
+      "id": "c0ae111a-bf2a-48d6-9d86-6ab41c1db2cc",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7ecfbe72-c09a-482e-8f81-43d9e7bb2917",
+              "leftValue": "={{ $json.url }}",
+              "rightValue": "(google|gstatic|ggpht|schema\\.org|calendly|example\\.com|sentry-next\\.wixpress\\.com|imli\\.com|sentry\\.wixpress\\.com|ingest\\.sentry\\.io|www\\.instagram\\.com|facebook\\.com|linkedin\\.com|twitter\\.com)",
+              "operator": {
+                "type": "string",
+                "operation": "notRegex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "747102d3-231a-4f54-881e-1191a42df9e4",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        420,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "url",
+        "options": {}
+      },
+      "id": "c65c043a-dd32-447f-b398-0ba13d37e141",
+      "name": "Remove Duplicates",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        620,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "b411aa8a-e3da-4e84-9c8b-f6c3e82622bf",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1160,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function to extract and format phone numbers\nfunction extractPhoneNumbers(htmlContent) {\n  // Regex for phone numbers with basic formatting\n  const phoneRegex = /(?:\\+?1[-.\\s]?)?\\(?[0-9]{3}\\)?[-.\\s]?[0-9]{3}[-.\\s]?[0-9]{4}/g;\n  // Extract and clean numbers\n  const matches = htmlContent.match(phoneRegex) || [];\n  const phoneNumbers = matches.map(phone => {\n    const cleaned = phone.replace(/\\D/g, '');\n    if (cleaned.length === 10) {\n      return `(${cleaned.slice(0,3)}) ${cleaned.slice(3,6)}-${cleaned.slice(6)}`;\n    } else if (cleaned.length === 11 && cleaned.startsWith('1')) {\n      return `+1 (${cleaned.slice(1,4)}) ${cleaned.slice(4,7)}-${cleaned.slice(7)}`;\n    }\n    return phone; // Return original if not matching expected format\n  });\n  return [...new Set(phoneNumbers)];\n}\n\n// Function to extract website URL from meta tags or canonical links\nfunction extractWebsiteUrl(htmlContent) {\n  // Try to find canonical URL first\n  const canonicalRegex = /<link[^>]*rel=[\"']canonical[\"'][^>]*href=[\"']([^\"']+)[\"'][^>]*>/i;\n  const canonicalMatch = htmlContent.match(canonicalRegex);\n  if (canonicalMatch && canonicalMatch[1]) {\n    return canonicalMatch[1];\n  }\n  \n  // Try to find og:url\n  const ogUrlRegex = /<meta[^>]*property=[\"']og:url[\"'][^>]*content=[\"']([^\"']+)[\"'][^>]*>/i;\n  const ogUrlMatch = htmlContent.match(ogUrlRegex);\n  if (ogUrlMatch && ogUrlMatch[1]) {\n    return ogUrlMatch[1];\n  }\n  \n  // Try to extract from base tag\n  const baseRegex = /<base[^>]*href=[\"']([^\"']+)[\"'][^>]*>/i;\n  const baseMatch = htmlContent.match(baseRegex);\n  if (baseMatch && baseMatch[1]) {\n    return baseMatch[1];\n  }\n  \n  // Return the input URL if available, otherwise empty string\n  return $json.url || \"\";\n}\n\n// Function to extract Facebook URL specifically\nfunction extractFacebookUrl(htmlContent) {\n  const fbRegex = /https?:\\/\\/(?:www\\.|m\\.|web\\.)?facebook\\.com\\/(?:(?:\\w)*#!\\/)?(?:pages\\/)?(?:[\\w\\-]*\\/)*([\\w\\-\\.]*)/gi;\n  const matches = htmlContent.match(fbRegex) || [];\n  return matches.length > 0 ? matches[0] : \"\"; // Return the first Facebook URL or empty string\n}\n\n// Function to extract Instagram URL\nfunction extractInstagramUrl(htmlContent) {\n  const instaRegex = /https?:\\/\\/(?:www\\.)?instagram\\.com\\/([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\\.(?!\\.))){0,28}(?:[A-Za-z0-9_]))?)/gi;\n  const matches = htmlContent.match(instaRegex) || [];\n  return matches.length > 0 ? matches[0] : \"\"; // Return the first Instagram URL or empty string\n}\n\n// Function to extract LinkedIn URL\nfunction extractLinkedInUrl(htmlContent) {\n  const linkedInRegex = /https?:\\/\\/(?:www\\.)?linkedin\\.com\\/(?:company\\/|in\\/|pub\\/|profile\\/|school\\/)([A-Za-z0-9_-]+)/gi;\n  const matches = htmlContent.match(linkedInRegex) || [];\n  return matches.length > 0 ? matches[0] : \"\"; // Return the first LinkedIn URL or empty string\n}\n\n// Function to extract business address\nfunction extractAddress(htmlContent) {\n  // Look for structured address data\n  const schemaOrgRegex = /\"address\"\\s*:\\s*{[^}]*\"streetAddress\"\\s*:\\s*\"([^\"]+)\"[^}]*\"addressLocality\"\\s*:\\s*\"([^\"]+)\"[^}]*\"addressRegion\"\\s*:\\s*\"([^\"]+)\"[^}]*\"postalCode\"\\s*:\\s*\"([^\"]+)\"/i;\n  const schemaMatch = htmlContent.match(schemaOrgRegex);\n  \n  if (schemaMatch) {\n    return `${schemaMatch[1]}, ${schemaMatch[2]}, ${schemaMatch[3]} ${schemaMatch[4]}`;\n  }\n  \n  // Look for address in meta tags\n  const metaAddressRegex = /<meta[^>]*name=[\"']address[\"'][^>]*content=[\"']([^\"']+)[\"'][^>]*>/i;\n  const metaMatch = htmlContent.match(metaAddressRegex);\n  if (metaMatch && metaMatch[1]) {\n    return metaMatch[1];\n  }\n  \n  // Look for address in contact information sections\n  const contactSectionRegex = /<div[^>]*class=[\"'][^\"']*contact[^\"']*[\"'][^>]*>([\\s\\S]*?)<\\/div>/i;\n  const contactMatch = htmlContent.match(contactSectionRegex);\n  if (contactMatch) {\n    // Look for US address pattern in the contact section\n    const addressPattern = /(\\d+\\s+[\\w\\s]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Court|Ct|Plaza|Plz|Square|Sq)[\\s,]+(?:Suite|Ste|Unit|#)?\\s*[\\w-]*[\\s,]+[\\w\\s]+,\\s*[A-Z]{2}\\s+\\d{5}(?:-\\d{4})?)/i;\n    const addressMatch = contactMatch[1].match(addressPattern);\n    if (addressMatch) {\n      return addressMatch[1];\n    }\n  }\n  \n  // Generic regex for US addresses\n  const genericAddressRegex = /(\\d+\\s+[\\w\\s.]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Court|Ct|Plaza|Plz|Square|Sq)[.,\\s]+(?:Suite|Ste|Unit|#)?\\s*[\\w-]*[.,\\s]+[\\w\\s]+[.,\\s]+[A-Z]{2}\\s+\\d{5}(?:-\\d{4})?)/gi;\n  const genericMatches = htmlContent.match(genericAddressRegex);\n  if (genericMatches && genericMatches.length > 0) {\n    return genericMatches[0].trim();\n  }\n  \n  return \"\";\n}\n\n// Function to extract business name\nfunction extractBusinessName(htmlContent) {\n  // Try to get from og:site_name meta tag\n  const siteNameRegex = /<meta[^>]*property=[\"']og:site_name[\"'][^>]*content=[\"']([^\"']+)[\"'][^>]*>/i;\n  const siteNameMatch = htmlContent.match(siteNameRegex);\n  if (siteNameMatch && siteNameMatch[1]) {\n    return siteNameMatch[1];\n  }\n  \n  // Try to get from schema.org organization name\n  const schemaOrgRegex = /\"name\"\\s*:\\s*\"([^\"]+)\"/i;\n  const schemaMatch = htmlContent.match(schemaOrgRegex);\n  if (schemaMatch && schemaMatch[1]) {\n    return schemaMatch[1];\n  }\n  \n  // Try to extract from title tag\n  const titleRegex = /<title>([\\s\\S]*?)<\\/title>/i;\n  const titleMatch = htmlContent.match(titleRegex);\n  if (titleMatch) {\n    // Common title patterns include \"Business Name | Tagline\" or \"Business Name - Tagline\"\n    const separatorMatch = titleMatch[1].match(/^([^|:\\-–—]+)/);\n    if (separatorMatch && separatorMatch[1]) {\n      return separatorMatch[1].trim();\n    }\n    return titleMatch[1].trim(); // If no separator found, return the whole title\n  }\n  \n  return \"\";\n}\n\n// Main processing code\nconst pageHTML = $json.data;\n\n// Extract emails\nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?!png|jpg|gif|jpeg)[a-zA-Z]{2,}/g;\nconst emails = pageHTML.match(emailRegex) || [];\nconst uniqueEmails = [...new Set(emails)];\n\n// Extract business name\nconst businessName = extractBusinessName(pageHTML);\n\n// Extract phone numbers\nconst phoneNumbers = extractPhoneNumbers(pageHTML);\n\n// Extract website URL and social media URLs\nconst websiteUrl = extractWebsiteUrl(pageHTML);\nconst facebookUrl = extractFacebookUrl(pageHTML);\nconst instagramUrl = extractInstagramUrl(pageHTML);\nconst linkedInUrl = extractLinkedInUrl(pageHTML);\n\n// Extract address\nconst address = extractAddress(pageHTML);\n\n// Return the result in n8n format\nreturn {\n  json: {\n    url: websiteUrl,\n    businessName: businessName,\n    address: address,\n    emails: uniqueEmails,\n    phoneNumbers: phoneNumbers,\n    facebookUrl: facebookUrl,\n    instagramUrl: instagramUrl,\n    linkedInUrl: linkedInUrl\n  }\n};"
+      },
+      "id": "e5840b57-7cb3-4c43-a5d6-49f2286dc0fa",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        120
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bcf2e9f9-0de4-4a20-9f32-6449f7bcea8a",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        860,
+        0
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads - Email,socials ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "businessName": "={{ $json.businessName }}",
+            "url": "={{ $json.url }}",
+            "Email 1": "={{ $json.emails.split(',')[0].trim() }}",
+            "Rest Emails": "={{ $json.emails.split(',').slice(1).join(',') }}",
+            "phoneNumbers": "={{ $json.phoneNumbers }}",
+            "facebookUrl": "={{ $json.facebookUrl }}",
+            "instagramUrl": "={{ $json.instagramUrl }}",
+            "linkedInUrl": "={{ $json.linkedInUrl }}",
+            "Enriched": "No"
+          },
+          "matchingColumns": [
+            "Emails"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email 1",
+              "displayName": "Email 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rest Emails",
+              "displayName": "Rest Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phoneNumbers",
+              "displayName": "phoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Enriched",
+              "displayName": "Enriched",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company info",
+              "displayName": "Company info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "icebreaker",
+              "displayName": "icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "6fadb872-ef8a-46a9-8805-60f64390ed85",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1400,
+        380
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.google.com/maps/search/{{ $json.query }}",
+        "options": {}
+      },
+      "id": "509eb50b-68ca-47c1-beb4-5d5a2daf74d5",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "32ed8743-0745-4d24-b186-be24add1bacf",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const excludeRegex = /(google|gstatic|ggpht|calendly|schema\\.org|example\\.com|sentry\\.wixpress\\.com|sentry-next\\.wixpress\\.com|ingest\\.sentry\\.io|sentry\\.io|imli\\.com|test@|example@|\\.webp|\\.svg)/i;\n\nreturn items.map(item => {\n  const input = item.json;\n  \n  // Clean emails\n  const emails = input.emails || [];\n  const cleanedEmails = emails.filter(email => !excludeRegex.test(email));\n  const finalEmails = cleanedEmails.length > 0 ? cleanedEmails.join(', ') : \"NIL\";\n  \n  // Clean phone numbers - handle as text to prevent Excel formula errors\n  let phoneNumbers = \"NIL\";\n  if (input.phoneNumbers && input.phoneNumbers.length > 0) {\n    // Format phone numbers consistently and escape with a single quote to ensure Excel treats as text\n    const formattedPhones = input.phoneNumbers.map(phone => {\n      // Remove non-digit characters first\n      const digitsOnly = phone.replace(/\\D/g, '');\n      // Format consistently or just return cleaned number\n      return digitsOnly; \n    });\n    phoneNumbers = formattedPhones.join(', ');\n  }\n  \n  // Check and set social media URLs to NIL if missing\n  const facebookUrl = input.facebookUrl || \"NIL\";\n  const instagramUrl = input.instagramUrl || \"NIL\";\n  const linkedInUrl = input.linkedInUrl || \"NIL\";\n  \n  return {\n    json: {\n      businessName: input.businessName || \"\",  // Business name if provided, empty if not\n      url: input.url || \"\",  // Leave URL empty if not available\n      address: input.address || \"\",  // Leave address empty if not available\n      emails: finalEmails,\n      phoneNumbers: phoneNumbers,\n      facebookUrl: facebookUrl,\n      instagramUrl: instagramUrl,\n      linkedInUrl: linkedInUrl\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        620,
+        400
+      ],
+      "id": "312b0f06-9c88-4857-9986-14dba512b3a3",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "587439af-d0d9-4602-b69d-188f0cae6abd",
+              "leftValue": "={{ $json.emails }}",
+              "rightValue": "NIL",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "4f785d6d-d727-4d00-aeb4-323806af8fc0",
+              "leftValue": "={{ $json.facebookUrl }}",
+              "rightValue": "NIL",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "3e1a3ab3-9439-4dec-b9a9-396f0c397685",
+              "leftValue": "={{ $json.instagramUrl }}",
+              "rightValue": "NIL",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "25ecac7e-5627-4c45-b9a6-5cc8a54a223d",
+              "leftValue": "={{ $json.linkedInUrl }}",
+              "rightValue": "NIL",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        400
+      ],
+      "id": "c919e9fa-4adb-4333-b141-be78af4cb2ab",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f8cac65d-8c76-44cf-bd29-0a524d577583",
+              "leftValue": "={{ $json.url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        400
+      ],
+      "id": "db22196a-2153-45e8-b527-88ffaeb8a117",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 842863384,
+          "mode": "list",
+          "cachedResultName": "Dumped Leads - Email,socials ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=842863384"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{ $json.url }}",
+            "Email 1": "={{ $json.emails.split(',')[0].trim() }}",
+            "phoneNumbers": "={{ $json.phoneNumbers }}",
+            "facebookUrl": "={{ $json.facebookUrl }}",
+            "instagramUrl": "={{ $json.instagramUrl }}",
+            "linkedInUrl": "={{ $json.linkedInUrl }}",
+            "Rest Email": "={{ $json.emails.split(',').slice(1).join(',') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "BusinessName",
+              "displayName": "BusinessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email 1",
+              "displayName": "Email 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rest Email",
+              "displayName": "Rest Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phoneNumbers",
+              "displayName": "phoneNumbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "facebookUrl",
+              "displayName": "facebookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "instagramUrl",
+              "displayName": "instagramUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedInUrl",
+              "displayName": "linkedInUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c6373dbd-96fa-49bd-b1e3-ac2243257e4f",
+      "name": "Google Sheets3",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1400,
+        580
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Email Verification1": [
+      {
+        "json": {
+          "domain": "smartchoice.solar",
+          "email": "info@smartchoice.solar",
+          "is_disposable": false,
+          "is_free_email": false,
+          "is_role_account": true,
+          "is_spamtrap": false,
+          "is_valid_syntax": true,
+          "mx_accepts_mail": true,
+          "mx_records": [
+            "aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt4.aspmx.l.google.com",
+            "alt3.aspmx.l.google.com"
+          ],
+          "status": "valid",
+          "username": "info",
+          "verification_mode": "quick"
+        }
+      }
+    ],
+    "Email Verification": [
+      {
+        "json": {
+          "domain": "smartchoice.solar",
+          "email": "info@smartchoice.solar",
+          "is_disposable": false,
+          "is_free_email": false,
+          "is_role_account": true,
+          "is_spamtrap": false,
+          "is_valid_syntax": true,
+          "mx_accepts_mail": true,
+          "mx_records": [
+            "aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt4.aspmx.l.google.com",
+            "alt3.aspmx.l.google.com"
+          ],
+          "status": "valid",
+          "username": "info",
+          "verification_mode": "quick"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4cdfebb0-e2c4-4873-a49c-14a3a5fd700e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "77f1d8375380ee2bc4995763b4e39528bf040d446fc3e9e5f6d802ec19784049"
+  },
+  "id": "QTlieTlEdhBy6T7o",
+  "tags": []
+}

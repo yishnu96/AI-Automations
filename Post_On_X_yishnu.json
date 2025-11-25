@@ -1,0 +1,323 @@
+{
+  "name": "Post On X",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        0
+      ],
+      "id": "1929d34a-a028-44ba-9442-b09cb5c60caa",
+      "name": "When chat message received",
+      "webhookId": "58c7c528-a044-49af-8860-a922829351d0"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }} {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "## Role\nExpert Social Media Content Creator specializing in engaging, concise Twitter posts that maximize audience interaction and brand visibility\n\n## Task\nCraft a compelling Twitter post that is emotionally resonant, fact-driven, and strategically hashtagged to increase reach and engagement\n\n## Context\nCreate a social media communication that effectively captures attention, communicates key information, and drives user interest within Twitter's character constraints\n\n## Instructions\n1. Composition Guidelines:\n- Write post under 270 characters\n- Include 3-5 strategic hashtags\n- Prioritize emotional and numerical storytelling\n- Maintain original context and information integrity\n\n2. Mandatory Hashtag Requirements:\n- Must include: #buildinpublic #onlineshopping\n- Select 1-3 additional contextually relevant hashtags from provided lists\n#solopreneur #entrepreneur #smallbusiness #beyourownboss #onlinebusiness\n#buildinpublic #onlinebusiness #startup #entrepreneur #ecommerce#onlineshopping #whatsappbusiness #whatsappmarketing #whatsappproducts\n#beautycare\n\n3. Content Strategy:\n- Incorporate numerical metrics or facts\n- Use engaging, conversational tone\n- Create emotional connection with audience\n- Focus on clear, impactful messaging\n\n4. Hashtag Selection Principles:\n- Choose hashtags that expand potential audience reach\n- Align hashtags with post's core message\n- Balance between broad and niche tags\n\n5. Quality Assurance:\n- Verify character count including hashtags\n- Ensure grammatical correctness\n- Maintain post's core communicative intent\n- Prioritize clarity and immediacy of message\n- Under 275 characters"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -60,
+        100
+      ],
+      "id": "508fda36-1272-4836-850f-a648483b3d3d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        320
+      ],
+      "id": "bdd8a1c6-8d0e-4edf-8868-b6c4c49174ed",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RA6imPItmTB0WJa5",
+          "name": "tib account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "= {{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        540,
+        100
+      ],
+      "id": "a30a94d8-1239-4bd6-b00d-ed4131eb5879",
+      "name": "X",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "kin6oLBjSIH2DgfW",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C098R2LF7J5",
+          "mode": "list",
+          "cachedResultName": "posted-post"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        756,
+        100
+      ],
+      "id": "869839c0-31b4-4f9b-882b-a25d7d7cebe0",
+      "name": "Slack",
+      "webhookId": "f9162b1b-9df9-4225-8587-ce4becfdd5fe",
+      "credentials": {
+        "slackApi": {
+          "id": "n6IapRhHVPySBj8J",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "message",
+          "app_mention"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C09805VKEJF",
+          "mode": "list",
+          "cachedResultName": "post-on-x"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        200
+      ],
+      "id": "8b829e8d-532f-4fce-b78c-585b9f0eb06a",
+      "name": "Slack Trigger",
+      "webhookId": "39ad1a06-7f65-45cc-b5be-8152576a777d",
+      "credentials": {
+        "slackApi": {
+          "id": "n6IapRhHVPySBj8J",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.event_ts }} {{ $json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        88,
+        320
+      ],
+      "id": "86f3589d-3685-4b5d-a4db-c19eb93e2afc",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7b0b147d-fa34-4112-b771-97af9d258348",
+              "leftValue": "={{ $json.output.length }}",
+              "rightValue": 280,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        100
+      ],
+      "id": "3aec952d-9460-4b14-bd9e-3c6a39851488",
+      "name": "If"
+    }
+  ],
+  "pinData": {
+    "Slack Trigger": [
+      {
+        "json": {
+          "user": "U08K3T8JD2B",
+          "type": "app_mention",
+          "ts": "1754034583.639739",
+          "client_msg_id": "c319e5b6-b3c1-4143-a8b3-e139872d7269",
+          "text": "<@U08K40ZJ7JB>\n Got few more insights\n76% of consumers having purchased products they saw in brand social media posts<https://www.hanspub.org/journal/doi.aspx?DOI=10.12677/ecl.2024.133865|4>. Social commerce sales represent a rapidly expanding market, with global social commerce sales estimated to reach $2.9 trillion by 2026\nSocial media sellers face specific pain points that traditional e-commerce platforms inadequately address: complex setup processes, lengthy time-to-market, and technical barriers to creating shareable store URLs. The proposed 10-15 click solution directly addresses these friction points by streamlining store creation and optimizing for social media integration.\n\nGet ready fore somethigh new Selelrs (edited)",
+          "team": "T08K3T8HWUF",
+          "blocks": [
+            {
+              "type": "rich_text",
+              "block_id": "h6Van",
+              "elements": [
+                {
+                  "type": "rich_text_section",
+                  "elements": [
+                    {
+                      "type": "user",
+                      "user_id": "U08K40ZJ7JB"
+                    },
+                    {
+                      "type": "text",
+                      "text": "\n Got few more insights\n76% of consumers having purchased products they saw in brand social media posts"
+                    },
+                    {
+                      "type": "link",
+                      "url": "https://www.hanspub.org/journal/doi.aspx?DOI=10.12677/ecl.2024.133865",
+                      "text": "4"
+                    },
+                    {
+                      "type": "text",
+                      "text": ". Social commerce sales represent a rapidly expanding market, with global social commerce sales estimated to reach $2.9 trillion by 2026\nSocial media sellers face specific pain points that traditional e-commerce platforms inadequately address: complex setup processes, lengthy time-to-market, and technical barriers to creating shareable store URLs. The proposed 10-15 click solution directly addresses these friction points by streamlining store creation and optimizing for social media integration.\n\nGet ready fore somethigh new Selelrs (edited)"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "channel": "C09805VKEJF",
+          "event_ts": "1754034583.639739"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "main": [
+        []
+      ]
+    },
+    "X": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "X",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "de8b2e09-f323-47cb-a30f-c671d6686420",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7319dea6413a65be76ae86ba8c3d17007ee633c0e4250d29112a1830d7925f07"
+  },
+  "id": "PJXjuVFZreSixzya",
+  "tags": []
+}

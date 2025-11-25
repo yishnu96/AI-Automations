@@ -1,0 +1,395 @@
+{
+  "name": "Parent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Loaction }} is the City Location and {{ $json.Industry }} is the Industry",
+        "options": {
+          "systemMessage": "=Create a JSON array with 20 search queries for Google Maps to find [INDUSTRY] businesses across [CITY/REGION].\n\nRequirements:\n\nTarget the main city/region and major surrounding areas at surface level\n\nCreate 20 different search queries in proper JSON format with no repeated locations\n\nUse only one business keyword per location (no combining keywords for the same location)\n\nFocus on city-level and major district-level targeting (avoid going too deep into specific neighborhoods)\n\n\nIMPORTANT:\n\nUse plus signs (+) between ALL words\n\nNo commas between city and state — use plus signs instead\n\nKeep location targeting broad (city level, major districts, or general directional areas)\n\nDo not repeat the same location with different keywords\n\nDo not include city/place names which has less population and has less probability of finding the [industry] businesses\n\nFormat example:\n\n[\n\n  {\"query\": \"Philadelphia+PA+solar+company\"},\n\n  {\"query\": \"Montgomery+County+PA+solar+installation\"},\n\n  {\"query\": \"Delaware+County+PA+solar+company\"}\n\n]\n\nFormatting rules:\n\nConnect all words with + symbols (Location+Keywords)\n\nNo spaces before or after commas in the JSON\n\nNo extra whitespace anywhere in the queries\n\nAlternate between business keywords and locations so each location only appears once\n\nonly allow keywords in the query : solar+company , solar+installation\n\nPlease provide only the properly formatted JSON array — no explanations or additional text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        80,
+        -200
+      ],
+      "id": "f9339612-7dd0-49fe-9576-5f6c9709339f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1819691274,
+          "mode": "list",
+          "cachedResultName": "Loaction Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=1819691274"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Scrape"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -140,
+        -200
+      ],
+      "id": "0d0701bb-09ec-41d2-8fee-5faeab8de9c2",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        100,
+        60
+      ],
+      "id": "800eabf8-e2fc-4800-b080-fcbfd132009d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zhrZhlkAfCqokeRK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk",
+          "mode": "list",
+          "cachedResultName": "N8N - For Email Scraping",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1819691274,
+          "mode": "list",
+          "cachedResultName": "Loaction Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VPGZJWsOBRH980RbANu7wuxhTD8ruZ6VB9RDUOOiVPk/edit#gid=1819691274"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Done",
+            "row_number": "={{ $('Google Sheets').first().json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Loaction",
+              "displayName": "Loaction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        -400
+      ],
+      "id": "b307772f-399a-474b-b538-b1e863b3cb43",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tY0FJBuJ7JTKB0im",
+          "name": "N8n X Google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        676,
+        -200
+      ],
+      "id": "5a396eaa-9450-42ea-906a-b707a7fa58ec",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.flatMap(item => {\n  let raw = item.json.output;\n\n  // Remove markdown code block wrappers\n  raw = raw.replace(/^```json\\n/, \"\").replace(/\\n```$/, \"\");\n\n  let parsed;\n  try {\n    parsed = JSON.parse(raw);\n  } catch (e) {\n    throw new Error(\"Invalid JSON after cleanup: \" + raw);\n  }\n\n  return parsed.map(obj => ({\n    json: {\n      query: decodeURIComponent(obj.query)\n    }\n  }));\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        456,
+        -200
+      ],
+      "id": "1773ce18-f82e-4838-9610-83c041e01ad5",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        -120
+      ],
+      "id": "89704f8e-8d53-476e-9b49-30e8946e5b9e",
+      "name": "Wait1",
+      "webhookId": "d4e42cc0-9435-4f0c-a7d2-432ce0401ec2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        -125
+      ],
+      "id": "45f65fe0-cad9-495f-84dd-62dda7d3b581",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        -325
+      ],
+      "id": "7cb44784-d2cb-4337-be10-3d22008d568c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QTlieTlEdhBy6T7o",
+          "mode": "list",
+          "cachedResultName": "Child"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        -180
+      ],
+      "id": "29940262-db37-484b-81a9-4fa543b50ef7",
+      "name": "Execute Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b71c4b1c-b813-467f-91d6-08e0166cf662",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "77f1d8375380ee2bc4995763b4e39528bf040d446fc3e9e5f6d802ec19784049"
+  },
+  "id": "ZXz5XGpkbmtwPluT",
+  "tags": []
+}
