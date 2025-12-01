@@ -6,8 +6,6 @@ Automated appointment booking system using AI voice agent that handles schedulin
 
 An intelligent voice agent that automates phone-based appointment booking using **VAPI** (voice AI), **N8N** (workflow automation), and **Cal.com** (calendar management). The system uses defined logic for reliability while maintaining natural conversation flow.
 
-**Watch Tutorial**: [YouTube - AI Voice Booking Agent](https://www.youtube.com/watch?v=b09o75A-X2E&t=2713s)
-
 ## ✨ What It Does
 
 - **Natural Conversations** - AI agent talks to callers using ElevenLabs voice
